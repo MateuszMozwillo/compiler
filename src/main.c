@@ -2,9 +2,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <ctype.h>
-
-#include <time.h>
-#include <windows.h>
+#include <stdbool.h>
 
 typedef enum {
     LITERAL,    // constant values
@@ -15,45 +13,63 @@ typedef enum {
 } TokenType;
 
 typedef struct {
-    TokenType tokenType;
+    TokenType token_type;
     char* content;
 } Token;
 
-char* RemoveWhiteSpace(const char* toProcess, size_t toProcessLen) {
-    size_t finalLen = 0;
-    for (size_t i = 0; i < toProcessLen; i++) {
-        if (!isspace(toProcess[i])) {
-            finalLen++;
+typedef struct {
+    char* str;
+    size_t len;
+} String;
+
+String remove_white_space(const char* to_process, size_t to_process_len) {
+    size_t final_len = 0;
+    for (size_t i = 0; i < to_process_len; i++) {
+        if (!isspace(to_process[i])) {
+            final_len++;
         } 
     }
 
     size_t j = 0;
-    char* processed = malloc(sizeof(char)*(finalLen+1));
+    char* processed = malloc(sizeof(char)*(final_len+1));
 
-    for (size_t i = 0; i < toProcessLen; i++) {
-        if (!isspace(toProcess[i])) {
-            processed[j] = toProcess[i];
+    for (size_t i = 0; i < to_process_len; i++) {
+        if (!isspace(to_process[i])) {
+            processed[j] = to_process[i];
             j++;
         }
     }
-    processed[finalLen] = '\0';
+    processed[final_len] = '\0';
 
-    return processed;
+    return (String){processed, final_len};
 }
 
-Token* Tokenize(char* toTokenize, size_t toTokenizeLen) {
+Token* tokenize(char* to_tokenize, size_t to_tokenize_len) {
     Token* tokenized;
 
-    char* processed = RemoveWhiteSpace(toTokenize, toTokenizeLen);
-    printf("%s\n", processed);
+    String processed = remove_white_space(to_tokenize, to_tokenize_len);
 
-    free(processed);
+    char* identifiers[] = {
+        "var",
+        "if",
+        "else",
+        "fn",
+        "for",
+        "while"
+    };
+
+    bool token_start = false;
+    for (size_t i = 0; i < processed.len; i++) {
+        
+    }
+
+    free(processed.str);
     return tokenized;
 }
 
 int main() {
 
-    char* to_tokenize = "int i = 10;";
+    char* to_tokenize = "var i = 10;";
 
 
     return 0;
