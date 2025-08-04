@@ -44,23 +44,57 @@ String remove_white_space(const char* to_process, size_t to_process_len) {
     return (String){processed, final_len};
 }
 
-Token* tokenize(char* to_tokenize, size_t to_tokenize_len) {
-    Token* tokenized;
-
-    String processed = remove_white_space(to_tokenize, to_tokenize_len);
-
-    char* identifiers[] = {
+/* 
+    will break if to_check_offset >= strlen(to_check)
+    returns token length else -1
+*/
+int _check_for_token_type(const char* to_check, size_t to_check_offset) {
+    
+    const size_t rt_count = 17;
+    const char* reserved_tokens[17] = {
         "var",
         "if",
         "else",
         "fn",
         "for",
-        "while"
+        "while",
+
+        ";",
+        "(",
+        ")",
+        "{",
+        "}",
+
+        "-",
+        "+",
+        "/",
+        "*",
+        "%",
+        "!",
     };
+    const size_t rt_lengths[17] = {3, 2, 4, 2, 3, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+
+    for (size_t i = 0; i < rt_count; i++) {
+        if (strncmp(reserved_tokens[i], to_check+to_check_offset, rt_lengths[i]) == 0) {
+            return rt_lengths[i];
+        };
+    }
+    return -1;
+}
+
+Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
+    Token* tokenized;
+
+    String processed = remove_white_space(to_tokenize, to_tokenize_len);
 
     bool token_start = false;
+
+    size_t current_possible_token_len = 8;
+    size_t current_token_len = 0;
+    char* possible_token = malloc(sizeof(char)*current_possible_token_len);
+    
     for (size_t i = 0; i < processed.len; i++) {
-        
+
     }
 
     free(processed.str);
@@ -68,7 +102,7 @@ Token* tokenize(char* to_tokenize, size_t to_tokenize_len) {
 }
 
 int main() {
-
+    
     char* to_tokenize = "var i = 10;";
 
 
