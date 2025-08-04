@@ -4,10 +4,14 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+#define STARTING_POSSIBLE_TOKEN_LEN 8
+#define STARTING_TOKEN_CONTENT_LEN 8
+#define STARTING_TOKEN_LIST_SIZE 64
+
 typedef enum {
     LITERAL,    // constant values
-    IDENTFIER,  // if else ...
-    KEYWORD,    // variable/function names 
+    IDENTFIER,  // variable/function names
+    KEYWORD,    // if else ...
     OPERATOR,   // + - ...
     SEPARATOR,  // { ; ...
 } TokenType;
@@ -15,6 +19,7 @@ typedef enum {
 typedef struct {
     TokenType token_type;
     char* content;
+    size_t content_len;
 } Token;
 
 typedef struct {
@@ -44,59 +49,47 @@ String remove_white_space(const char* to_process, size_t to_process_len) {
     return (String){processed, final_len};
 }
 
-/* 
-    will break if to_check_offset >= strlen(to_check)
-    returns token length else -1
-*/
-int _check_for_token_type(const char* to_check, size_t to_check_offset) {
-    
-    const size_t rt_count = 17;
-    const char* reserved_tokens[17] = {
-        "var",
-        "if",
-        "else",
-        "fn",
-        "for",
-        "while",
-
-        ";",
-        "(",
-        ")",
-        "{",
-        "}",
-
-        "-",
-        "+",
-        "/",
-        "*",
-        "%",
-        "!",
-    };
-    const size_t rt_lengths[17] = {3, 2, 4, 2, 3, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-
-    for (size_t i = 0; i < rt_count; i++) {
-        if (strncmp(reserved_tokens[i], to_check+to_check_offset, rt_lengths[i]) == 0) {
-            return rt_lengths[i];
-        };
-    }
-    return -1;
-}
-
 Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
     Token* tokenized;
 
     String processed = remove_white_space(to_tokenize, to_tokenize_len);
+    
+    const size_t rt_len = 17;
+    const Token reserved_tokens[17] = {
+        (Token){KEYWORD, "var", 3},
+        (Token){KEYWORD, "if", 2},
+        (Token){KEYWORD, "else", 4},
+        (Token){KEYWORD, "fn", 2},
+        (Token){KEYWORD, "for", 3},
+        (Token){KEYWORD, "while", 5},
+        (Token){SEPARATOR, ";", 1},
+        (Token){SEPARATOR, "(", 1},
+        (Token){SEPARATOR, ")", 1},
+        (Token){SEPARATOR, "{", 1},
+        (Token){SEPARATOR, "}", 1},
+        (Token){OPERATOR, "-", 1},
+        (Token){OPERATOR, "+", 1},
+        (Token){OPERATOR, "/", 1},
+        (Token){OPERATOR, "*", 1},
+        (Token){OPERATOR, "%", 1},
+        (Token){OPERATOR, "!", 1},
+    };
 
     bool token_start = false;
 
-    size_t current_possible_token_len = 8;
+    size_t current_possible_token_len = STARTING_POSSIBLE_TOKEN_LEN;
     size_t current_token_len = 0;
     char* possible_token = malloc(sizeof(char)*current_possible_token_len);
-    
+
     for (size_t i = 0; i < processed.len; i++) {
 
+        for (size_t j = 0; j < rt_len; j++) {
+            if (strncmp(reserved_tokens[j].content, processed.str+i, reserved_tokens[j].content_len) == 0) {
+                
+            };
+        }
     }
-
+    
     free(processed.str);
     return tokenized;
 }
