@@ -6,7 +6,7 @@
 
 #define STARTING_POSSIBLE_TOKEN_LEN 8
 #define STARTING_TOKEN_CONTENT_LEN 8
-#define STARTING_TOKEN_LIST_SIZE 64
+#define STARTING_TOKEN_LIST_LEN 64
 
 typedef enum {
     LITERAL,    // constant values
@@ -50,8 +50,9 @@ String remove_white_space(const char* to_process, size_t to_process_len) {
 }
 
 Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
-    Token* tokenized;
-
+    size_t tokenized_len = STARTING_TOKEN_LIST_LEN;
+    Token* tokenized = malloc(sizeof(Token)*tokenized_len);
+    
     String processed = remove_white_space(to_tokenize, to_tokenize_len);
     
     const size_t rt_len = 17;
@@ -59,7 +60,7 @@ Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
         (Token){KEYWORD, "var", 3},
         (Token){KEYWORD, "if", 2},
         (Token){KEYWORD, "else", 4},
-        (Token){KEYWORD, "fn", 2},
+        (Token){KEYWORD, "function", 2},
         (Token){KEYWORD, "for", 3},
         (Token){KEYWORD, "while", 5},
         (Token){SEPARATOR, ";", 1},
