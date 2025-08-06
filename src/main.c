@@ -4,9 +4,8 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-#define STARTING_POSSIBLE_TOKEN_LEN 8
-#define STARTING_TOKEN_CONTENT_LEN 8
-#define STARTING_TOKEN_LIST_LEN 64
+#define STARTING_MAX_TOKEN_LEN 8
+#define STARTING_MAX_TOKENIZED_LEN 64
 
 typedef enum {
     NOT_DETERMINED,
@@ -60,8 +59,8 @@ void _tokenized_append(Token* tokenized, size_t* current_t_len, size_t* max_t_le
 }
 
 Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
-    size_t current_tokenized_len = 0;
-    size_t max_tokenized_len = STARTING_TOKEN_LIST_LEN;
+    size_t tokenized_len = 0;
+    size_t max_tokenized_len = STARTING_MAX_TOKENIZED_LEN;
     Token* tokenized = malloc(sizeof(Token)*max_tokenized_len);
 
     String processed = remove_white_space(to_tokenize, to_tokenize_len);
@@ -77,50 +76,65 @@ Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
     };
 
     const size_t sno_len = 12;
-    const char separators_and_op[] = {';', '(', ')', '{', '}', '-', '+', '/', '*', '%', '!', '"'};
+    const Token separators_and_ops[12] = {
+        (Token){SEPARATOR, ";", 1},
+        (Token){SEPARATOR, "(", 1},
+        (Token){SEPARATOR, ")", 1},
+        (Token){SEPARATOR, "{", 1},
+        (Token){SEPARATOR, "}", 1},
+        (Token){SEPARATOR, "\"", 1},
+
+        (Token){OPERATOR, "-", 1},
+        (Token){OPERATOR, "+", 1},
+        (Token){OPERATOR, "/", 1},
+        (Token){OPERATOR, "*", 1},
+        (Token){OPERATOR, "%", 1},
+        (Token){OPERATOR, "!", 1},
+    };
 
     bool token_start = true;
 
-    size_t max_token_len = STARTING_POSSIBLE_TOKEN_LEN;
-    size_t current_token_len = 0;
-    char* possible_token = malloc(sizeof(char)*max_token_len);
+    size_t max_token_len = STARTING_MAX_TOKEN_LEN;
+    size_t token_len = 0;
+    char* token = malloc(sizeof(char)*max_token_len);
 
     for (size_t i = 0; i < processed.len; i++) {
 
         for (size_t j = 0; j < sno_len; j++) {
-            if (processed.str[i] == separators_and_op[j]) {
+            if (processed.str[i] == separators_and_ops[j].content[0]) {
                 if (token_start) {
-                    if (current_tokenized_len + 1 >= max_tokenized_len) {
+                    if (tokenized_len + 1 >= max_tokenized_len) {
                         max_tokenized_len *= 2;
                         tokenized = realloc(tokenized, max_tokenized_len);
                     }
-                    tokenized[current_tokenized_len] = (Token){NOT_DETERMINED, "", current_token_len};
-                    strncpy(tokenized[current_tokenized_len].content, possible_token, current_token_len);
-                    current_tokenized_len += 1;
+                    // TODO: fix  this
+                    tokenized[tokenized_len] = (Token){NOT_DETERMINED, "", token_len};
+                    strncpy(tokenized[tokenized_len].content, token, token_len);
+                    tokenized_len += 1;
 
-                    tokenized[current_tokenized_len]
+                    tokenized[tokenized_len];
                 }
                 token_start = false;
             }
         }
-        
-        bool is_rt_token = false;
+
+        bool is_rk_token = false;
         if (token_start) {
             for (size_t j = 0; j < rk_len; j++) {
                 if (strncmp(reserved_keywords[j].content, processed.str+i, reserved_keywords[j].content_len) == 0) {
-                    is_rt_token = true;
+                    is_rk_token = true;
                 }
             }
         }
 
-        if (!is_rt_token) {
+        if (!is_rk_token) {
             token_start = false;
-            if (current_token_len + 1 >= max_token_len) {
+            if (token_len + 1 >= max_token_len) {
                 max_token_len *= 2;
-                possible_token = realloc(possible_token, max_token_len);
+                token = realloc(token, max_token_len);
             }
-            possible_token[current_token_len] = processed.str[i];
-            current_token_len += 1;
+            token[token_len] = processed.str[i];
+            token_len += 1;
         } 
     }
 
