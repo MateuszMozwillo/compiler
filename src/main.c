@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -9,6 +9,7 @@
 #define STARTING_TOKEN_LIST_LEN 64
 
 typedef enum {
+    NOT_DETERMINED,
     LITERAL,    // constant values
     IDENTFIER,  // variable/function names
     KEYWORD,    // if else ...
@@ -49,56 +50,87 @@ String remove_white_space(const char* to_process, size_t to_process_len) {
     return (String){processed, final_len};
 }
 
+void _tokenized_append(Token* tokenized, size_t* current_t_len, size_t* max_t_len, Token token_to_append) {
+    if (*current_t_len >= max_t_len - 1) {
+        *max_t_len *= 2;
+        tokenized = realloc(tokenized, sizeof(Token)**max_t_len);
+    }
+    tokenized[*current_t_len] = token_to_append;
+    *current_t_len++; 
+}
+
 Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
-    size_t tokenized_len = STARTING_TOKEN_LIST_LEN;
-    Token* tokenized = malloc(sizeof(Token)*tokenized_len);
-    
+    size_t current_tokenized_len = 0;
+    size_t max_tokenized_len = STARTING_TOKEN_LIST_LEN;
+    Token* tokenized = malloc(sizeof(Token)*max_tokenized_len);
+
     String processed = remove_white_space(to_tokenize, to_tokenize_len);
-    
-    const size_t rt_len = 17;
-    const Token reserved_tokens[17] = {
+
+    const size_t rk_len = 6;
+    const Token reserved_keywords[6] = {
         (Token){KEYWORD, "var", 3},
         (Token){KEYWORD, "if", 2},
         (Token){KEYWORD, "else", 4},
         (Token){KEYWORD, "function", 2},
         (Token){KEYWORD, "for", 3},
         (Token){KEYWORD, "while", 5},
-        (Token){SEPARATOR, ";", 1},
-        (Token){SEPARATOR, "(", 1},
-        (Token){SEPARATOR, ")", 1},
-        (Token){SEPARATOR, "{", 1},
-        (Token){SEPARATOR, "}", 1},
-        (Token){OPERATOR, "-", 1},
-        (Token){OPERATOR, "+", 1},
-        (Token){OPERATOR, "/", 1},
-        (Token){OPERATOR, "*", 1},
-        (Token){OPERATOR, "%", 1},
-        (Token){OPERATOR, "!", 1},
     };
 
-    bool token_start = false;
+    const size_t sno_len = 12;
+    const char separators_and_op[] = {';', '(', ')', '{', '}', '-', '+', '/', '*', '%', '!', '"'};
 
-    size_t current_possible_token_len = STARTING_POSSIBLE_TOKEN_LEN;
+    bool token_start = true;
+
+    size_t max_token_len = STARTING_POSSIBLE_TOKEN_LEN;
     size_t current_token_len = 0;
-    char* possible_token = malloc(sizeof(char)*current_possible_token_len);
+    char* possible_token = malloc(sizeof(char)*max_token_len);
 
     for (size_t i = 0; i < processed.len; i++) {
 
-        for (size_t j = 0; j < rt_len; j++) {
-            if (strncmp(reserved_tokens[j].content, processed.str+i, reserved_tokens[j].content_len) == 0) {
-                
-            };
+        for (size_t j = 0; j < sno_len; j++) {
+            if (processed.str[i] == separators_and_op[j]) {
+                if (token_start) {
+                    if (current_tokenized_len + 1 >= max_tokenized_len) {
+                        max_tokenized_len *= 2;
+                        tokenized = realloc(tokenized, max_tokenized_len);
+                    }
+                    tokenized[current_tokenized_len] = (Token){NOT_DETERMINED, "", current_token_len};
+                    strncpy(tokenized[current_tokenized_len].content, possible_token, current_token_len);
+                    current_tokenized_len += 1;
+
+                    tokenized[current_tokenized_len]
+                }
+                token_start = false;
+            }
         }
+        
+        bool is_rt_token = false;
+        if (token_start) {
+            for (size_t j = 0; j < rk_len; j++) {
+                if (strncmp(reserved_keywords[j].content, processed.str+i, reserved_keywords[j].content_len) == 0) {
+                    is_rt_token = true;
+                }
+            }
+        }
+
+        if (!is_rt_token) {
+            token_start = false;
+            if (current_token_len + 1 >= max_token_len) {
+                max_token_len *= 2;
+                possible_token = realloc(possible_token, max_token_len);
+            }
+            possible_token[current_token_len] = processed.str[i];
+            current_token_len += 1;
+        } 
     }
-    
+
     free(processed.str);
     return tokenized;
 }
 
 int main() {
-    
-    char* to_tokenize = "var i = 10;";
 
+    char* to_tokenize = "var i = 10;";
 
     return 0;
 }
