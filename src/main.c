@@ -50,7 +50,7 @@ String remove_white_space(const char* to_process, size_t to_process_len) {
 }
 
 void _tokenized_append(Token* tokenized, size_t* current_t_len, size_t* max_t_len, Token token_to_append) {
-    if (*current_t_len >= max_t_len - 1) {
+    if (*current_t_len >= *max_t_len - 1) {
         *max_t_len *= 2;
         tokenized = realloc(tokenized, sizeof(Token)**max_t_len);
     }
@@ -135,7 +135,8 @@ Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
             }
             token[token_len] = processed.str[i];
             token_len += 1;
-        } 
+        }
+
     }
 
     free(processed.str);
