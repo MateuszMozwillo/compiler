@@ -10,10 +10,10 @@ int main() {
     }
     printf("\n");
     
-    // clean up
-    for (size_t i = 0; i < tokenized.len; i++) {
-        free(tokenized.ptr[i].content);
-    }
+    // gives error with free
+    // for (size_t i = 0; i < tokenized.len; i++) {
+    //     free(tokenized.ptr[i].content);
+    // }
     free(tokenized.ptr);
 
     return 0;

@@ -29,8 +29,7 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
 
     String processed = remove_white_space(to_tokenize, to_tokenize_len);
 
-    const size_t rk_len = 7;
-    const Token reserved_keywords[7] = {
+    const Token reserved_keywords[RK_LEN] = {
         (Token){KEYWORD, "var", 3},
         (Token){KEYWORD, "if", 2},
         (Token){KEYWORD, "else", 4},
@@ -40,8 +39,7 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
         (Token){KEYWORD, "return", 6},
     };
 
-    const size_t sno_len = 14;
-    const Token separators_and_ops[14] = {
+    const Token separators_and_ops[SNO_LEN] = {
         (Token){SEPARATOR, ";", 1},
         (Token){SEPARATOR, "(", 1},
         (Token){SEPARATOR, ")", 1},
@@ -67,8 +65,9 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
 
     for (size_t i = 0; i < processed.len; i++) {
 
+        bool is_sno_token = false;
         // checks for separators and operators
-        for (size_t j = 0; j < sno_len; j++) {
+        for (size_t j = 0; j < SNO_LEN; j++) {
             if (processed.str[i] == separators_and_ops[j].content[0]) {
                 if (token_start) {
                     if (tokenized_len + 2 >= max_tokenized_len) {
@@ -95,14 +94,14 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
                 token = malloc(sizeof(char)*max_token_len);
 
                 token_start = false;
-                i++;
+                is_sno_token = true;
             }
         }
 
         // checks for reserved token
         bool is_rk_token = false;
         if (!token_start) {
-            for (size_t j = 0; j < rk_len; j++) {
+            for (size_t j = 0; j < RK_LEN; j++) {
                 if (strncmp(reserved_keywords[j].content, processed.str+i, reserved_keywords[j].content_len) == 0) {
                     is_rk_token = true;
                     i += reserved_keywords[j].content_len - 1;
@@ -117,7 +116,7 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
             }
         }
 
-        if (!is_rk_token) {
+        if (!is_rk_token && !is_sno_token) {
             token_start = true;
             if (token_len + 2 >= max_token_len) {
                 max_token_len *= 2;
