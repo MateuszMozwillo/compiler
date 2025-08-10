@@ -9,12 +9,8 @@ int main() {
         printf("%s ", tokenized.ptr[i].content);
     }
     printf("\n");
-    
-    // gives error with free
-    // for (size_t i = 0; i < tokenized.len; i++) {
-    //     free(tokenized.ptr[i].content);
-    // }
-    free(tokenized.ptr);
+
+    token_vec_cleanup(tokenized);
 
     return 0;
 }

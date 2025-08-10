@@ -65,7 +65,6 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
 
     for (size_t i = 0; i < processed.len; i++) {
 
-        bool is_sno_token = false;
         // checks for separators and operators
         for (size_t j = 0; j < SNO_LEN; j++) {
             if (processed.str[i] == separators_and_ops[j].content[0]) {
@@ -94,16 +93,15 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
                 token = malloc(sizeof(char)*max_token_len);
 
                 token_start = false;
-                is_sno_token = true;
+
+                goto end_of_loop;
             }
         }
 
         // checks for reserved token
-        bool is_rk_token = false;
         if (!token_start) {
             for (size_t j = 0; j < RK_LEN; j++) {
                 if (strncmp(reserved_keywords[j].content, processed.str+i, reserved_keywords[j].content_len) == 0) {
-                    is_rk_token = true;
                     i += reserved_keywords[j].content_len - 1;
 
                     if (tokenized_len + 1 >= max_tokenized_len) {
@@ -112,22 +110,32 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
                     }
                     tokenized[tokenized_len] = reserved_keywords[j];
                     tokenized_len++;
+
+                    goto end_of_loop;
                 }
             }
         }
 
-        if (!is_rk_token && !is_sno_token) {
-            token_start = true;
-            if (token_len + 2 >= max_token_len) {
-                max_token_len *= 2;
-                token = realloc(token, max_token_len);
-            }
-            token[token_len] = processed.str[i];
-            token_len += 1;
+        token_start = true;
+        if (token_len + 2 >= max_token_len) {
+            max_token_len *= 2;
+            token = realloc(token, max_token_len);
         }
-
+        token[token_len] = processed.str[i];
+        token_len += 1;
+        
+        end_of_loop:
     }
 
     free(processed.str);
     return (TokenVec){tokenized, tokenized_len};
+}
+
+void token_vec_cleanup(TokenVec tokenVec) {
+    for (size_t i = 0; i < tokenVec.len; i++) {
+        if (tokenVec.ptr->token_type == LITERAL || tokenVec.ptr->token_type == IDENTFIER) {
+            free(tokenVec.ptr[i].content);
+        }
+    }
+    free(tokenVec.ptr);
 }

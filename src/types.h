@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdlib.h>
 
 extern const char* token_type_str[]; 

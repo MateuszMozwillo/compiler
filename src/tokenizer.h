@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,3 +17,5 @@
 String remove_white_space(const char* to_process, size_t to_process_len);
 
 TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len);
+
+void token_vec_cleanup(TokenVec tokenVec);
