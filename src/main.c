@@ -66,8 +66,8 @@ Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
         (Token){KEYWORD, "while", 5},
     };
 
-    const size_t sno_len = 12;
-    const Token separators_and_ops[12] = {
+    const size_t sno_len = 13;
+    const Token separators_and_ops[13] = {
         (Token){SEPARATOR, ";", 1},
         (Token){SEPARATOR, "(", 1},
         (Token){SEPARATOR, ")", 1},
@@ -81,6 +81,7 @@ Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
         (Token){OPERATOR, "*", 1},
         (Token){OPERATOR, "%", 1},
         (Token){OPERATOR, "!", 1},
+        (Token){OPERATOR, "=", 1},
     };
 
     bool token_start = false;
@@ -99,7 +100,11 @@ Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
                         max_tokenized_len *= 2;
                         tokenized = realloc(tokenized, max_tokenized_len);
                     }
-                    tokenized[tokenized_len] = (Token){IDENTFIER, "", token_len};
+                    TokenType token_type = IDENTFIER;
+                    if (token[0] == '\"' || isdigit(token[0])) {
+                        token_type = LITERAL;
+                    }
+                    tokenized[tokenized_len] = (Token){token_type, "", token_len};
                     tokenized[tokenized_len].content = malloc(sizeof(char) * (token_len + 1));
                     strncpy(tokenized[tokenized_len].content, token, token_len);
                     tokenized[tokenized_len].content[token_len] = '\0';
@@ -115,6 +120,7 @@ Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
                 token = malloc(sizeof(char)*max_token_len);
 
                 token_start = false;
+                i++;
             }
         }
 
@@ -157,7 +163,7 @@ int main() {
     char* to_tokenize = "var i = 10;";
     Token* tokenized = tokenize(to_tokenize, strlen(to_tokenize));
 
-    for (size_t i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 5; i++) {
         printf("TOKEN_TYPE: [%s] TOKEN_CONTENT: [%s]\n", token_type_str[tokenized[i].token_type], tokenized[i].content);
     }
     
