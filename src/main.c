@@ -7,6 +7,7 @@
 #define STARTING_MAX_TOKEN_LEN 8
 #define STARTING_MAX_TOKENIZED_LEN 64
 
+const char* token_type_str[] = {"LITERAL", "IDENTIFIER", "KEYWORD", "OPERATOR", "SEPARATOR"}; 
 typedef enum {
     LITERAL,    // constant values
     IDENTFIER,  // variable/function names
@@ -99,7 +100,9 @@ Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
                         tokenized = realloc(tokenized, max_tokenized_len);
                     }
                     tokenized[tokenized_len] = (Token){IDENTFIER, "", token_len};
+                    tokenized[tokenized_len].content = malloc(sizeof(char) * (token_len + 1));
                     strncpy(tokenized[tokenized_len].content, token, token_len);
+                    tokenized[tokenized_len].content[token_len] = '\0';
                     tokenized_len++;
                 }
 
@@ -135,7 +138,7 @@ Token* tokenize(const char* to_tokenize, size_t to_tokenize_len) {
 
         if (!is_rk_token) {
             token_start = true;
-            if (token_len + 1 >= max_token_len) {
+            if (token_len + 2 >= max_token_len) {
                 max_token_len *= 2;
                 token = realloc(token, max_token_len);
             }
@@ -155,7 +158,7 @@ int main() {
     Token* tokenized = tokenize(to_tokenize, strlen(to_tokenize));
 
     for (size_t i = 0; i < 4; i++) {
-        printf("TOKEN_CONTENT: [%s] ", tokenized[i].content);
+        printf("TOKEN_TYPE: [%s] TOKEN_CONTENT: [%s]\n", token_type_str[tokenized[i].token_type], tokenized[i].content);
     }
     
     return 0;
