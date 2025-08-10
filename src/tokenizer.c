@@ -157,7 +157,6 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
         }
         token[token_len] = processed.str[i];
         token_len += 1;
-        
         end_of_loop:
     }
     free(token);
