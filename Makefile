@@ -4,4 +4,4 @@ run: build
 	./main
 
 build:
-	gcc $(SRC) -o main 
+	gcc -Wall $(SRC) -o main 
