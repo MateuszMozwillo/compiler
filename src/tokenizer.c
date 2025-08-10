@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdbool.h>
-
 #include "tokenizer.h"
-
-const char* token_type_str[] = {"LITERAL", "IDENTIFIER", "KEYWORD", "OPERATOR", "SEPARATOR"};
 
 String remove_white_space(const char* to_process, size_t to_process_len) {
     size_t final_len = 0;
@@ -29,7 +21,6 @@ String remove_white_space(const char* to_process, size_t to_process_len) {
 
     return (String){processed, final_len};
 }
-
 
 TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
     size_t tokenized_len = 0;
@@ -137,8 +128,7 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
         }
 
     }
-    printf("%lld", tokenized_len);
-    printf("%lld\n", max_tokenized_len);
+
     free(processed.str);
     return (TokenVec){tokenized, tokenized_len};
 }
