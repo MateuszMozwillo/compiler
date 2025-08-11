@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#define MEM_ALLOCATION_ERROR_MSG "Error: error when allocating memory"
+#define MEM_ALLOCATION_ERROR_MSG "Error: allocating memory failed"
 
 #define vec(type) struct { \
     type *data; \

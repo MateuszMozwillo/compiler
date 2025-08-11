@@ -1,5 +1,7 @@
 #include "tokenizer.h"
 
+// TODO: stop removing whitespaces before tokenizing code
+
 String remove_white_space(const char* to_process, size_t to_process_len) {
     size_t final_len = 0;
     for (size_t i = 0; i < to_process_len; i++) {
@@ -11,7 +13,7 @@ String remove_white_space(const char* to_process, size_t to_process_len) {
     size_t j = 0;
     char* processed = malloc(sizeof(char)*(final_len+1));
     if (processed == NULL) {
-        fprintf(stderr, "Error: error when allocating");
+        fprintf(stderr, MEM_ALLOCATION_ERROR_MSG);
         exit(EXIT_FAILURE);
     }
 
