@@ -29,7 +29,6 @@ String remove_white_space(const char* to_process, size_t to_process_len) {
 // TODO: wrap mallocs and reallocs into vector structs
 
 TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
-    
     vec(Token) tokenized;
     vec_init(tokenized, STARTING_MAX_TOKENIZED_LEN);
 
@@ -74,33 +73,27 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
         for (size_t j = 0; j < SNO_LEN; j++) {
             if (processed.str[i] == separators_and_ops[j].content[0]) {
                 if (token_start) {
-
                     
                     TokenType token_type = IDENTIFIER;
                     if (token.data[0] == '\"' || isdigit(token.data[0])) {
                         token_type = LITERAL;
                     }
-
                     Token token_to_append = (Token){token_type, "", token.len};
                     token_to_append.content = malloc(sizeof(char) * (token.len + 1));
-                    
                     if (token_to_append.content == NULL) {
                         fprintf(stderr, "Error: error when allocating");
                         exit(EXIT_FAILURE);
                     }
                     strncpy(token_to_append.content, token.data, token.len);
-                    token_to_append.content[token.len] = '\0';
-
-                    vec_append(tokenized, token_to_append);
                     
+                    token_to_append.content[token.len] = '\0';
+                    vec_append(tokenized, token_to_append);
                 }
-
-                tokenized[tokenized_len] = separators_and_ops[j];
-                tokenized_len++;
+                vec_append(tokenized, separators_and_ops[j]);
 
                 // restarts current token
 
-                free(token.data);
+                vec_cleanup(token);
                 vec_init(token, STARTING_MAX_TOKEN_LEN);
                 token_start = false;
 
@@ -113,30 +106,21 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
             for (size_t j = 0; j < RK_LEN; j++) {
                 if (strncmp(reserved_keywords[j].content, processed.str+i, reserved_keywords[j].content_len) == 0) {
                     i += reserved_keywords[j].content_len - 1;
-
-                    if (tokenized_len + 1 >= max_tokenized_len) {
-                        max_tokenized_len *= 2;
-                        tokenized = realloc(tokenized, sizeof(Token)*max_tokenized_len);
-                        if (tokenized == NULL) {
-                            fprintf(stderr, "Error: error when allocating");
-                            exit(EXIT_FAILURE);
-                        }
-                    }
-                    tokenized[tokenized_len] = reserved_keywords[j];
-                    tokenized_len++;
+                    vec_append(tokenized, reserved_keywords[j]);
 
                     goto end_of_loop;
                 }
             }
         }
 
+        token_start = true;
         vec_append(token, processed.str[i]);
 
         end_of_loop:
     }
-    free(token.data);
+    vec_cleanup(token);
     free(processed.str);
-    return (TokenVec){tokenized, tokenized_len};
+    return (TokenVec){tokenized.data, tokenized.len};
 }
 
 void token_vec_cleanup(TokenVec tokenVec) {
