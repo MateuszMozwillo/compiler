@@ -90,7 +90,6 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
                 vec_append(tokenized, separators_and_ops[j]);
 
                 // restarts current token
-
                 vec_cleanup(token);
                 vec_init(token, STARTING_MAX_TOKEN_LEN);
                 token_start = false;

@@ -6,7 +6,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-#include "utils.h"
+#include "vector.h"
 #include "types.h"
 
 #define RK_LEN (size_t)7
