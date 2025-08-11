@@ -26,8 +26,6 @@ String remove_white_space(const char* to_process, size_t to_process_len) {
     return (String){processed, final_len};
 }
 
-// TODO: wrap mallocs and reallocs into vector structs
-
 TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
     vec(Token) tokenized;
     vec_init(tokenized, STARTING_MAX_TOKENIZED_LEN);
