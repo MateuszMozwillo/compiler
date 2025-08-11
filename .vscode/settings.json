@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "utils.h": "c",
+        "vector": "c",
+        "xstring": "c",
+        "initializer_list": "c",
+        "type_traits": "c",
+        "xutility": "c",
+        "tokenizer.h": "c"
+    }
+}
