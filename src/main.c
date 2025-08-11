@@ -6,7 +6,7 @@ int main() {
     TokenVec tokenized = tokenize(to_tokenize, strlen(to_tokenize));
 
     for (size_t i = 0; i < tokenized.len; i++) {
-        printf(" %s" , tokenized.ptr[i].content);
+        printf("%s " , tokenized.ptr[i].content);
     }
 
     token_vec_cleanup(tokenized);

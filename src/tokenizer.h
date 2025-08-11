@@ -12,8 +12,8 @@
 #define RK_LEN (size_t)7
 #define SNO_LEN (size_t)14
 
-#define STARTING_MAX_TOKEN_LEN 8
-#define STARTING_MAX_TOKENIZED_LEN 64
+#define STARTING_TOKEN_CAPACITY 8
+#define STARTING_TOKENIZED_CAPACITY 64
 
 String remove_white_space(const char* to_process, size_t to_process_len);
 

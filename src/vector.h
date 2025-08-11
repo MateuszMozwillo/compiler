@@ -5,9 +5,9 @@
 #define MEM_ALLOCATION_ERROR_MSG "Error: error when allocating memory"
 
 #define vec(type) struct { \
-    type *data;            \
-    size_t len;           \
-    size_t capacity;       \
+    type *data; \
+    size_t len; \
+    size_t capacity; \
 }
 
 #define vec_init(vec, starting_capacity) do { \

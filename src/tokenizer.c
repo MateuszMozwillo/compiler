@@ -28,7 +28,7 @@ String remove_white_space(const char* to_process, size_t to_process_len) {
 
 TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
     vec(Token) tokenized;
-    vec_init(tokenized, STARTING_MAX_TOKENIZED_LEN);
+    vec_init(tokenized, STARTING_TOKENIZED_CAPACITY);
 
     String processed = remove_white_space(to_tokenize, to_tokenize_len);
 
@@ -63,7 +63,7 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
     bool token_start = false;
 
     vec(char) token;
-    vec_init(token, STARTING_MAX_TOKEN_LEN);
+    vec_init(token, STARTING_TOKEN_CAPACITY);
 
     for (size_t i = 0; i < processed.len; i++) {
 
@@ -91,7 +91,7 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
 
                 // restarts current token
                 vec_cleanup(token);
-                vec_init(token, STARTING_MAX_TOKEN_LEN);
+                vec_init(token, STARTING_TOKEN_CAPACITY);
                 token_start = false;
 
                 goto end_of_loop;
