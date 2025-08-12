@@ -81,7 +81,7 @@ TokenVec tokenize(const char* to_tokenize, size_t to_tokenize_len) {
                     Token token_to_append = (Token){token_type, "", token.len};
                     token_to_append.content = malloc(sizeof(char) * (token.len + 1));
                     if (token_to_append.content == NULL) {
-                        fprintf(stderr, "Error: error when allocating");
+                        fprintf(stderr, MEM_ALLOCATION_ERROR_MSG);
                         exit(EXIT_FAILURE);
                     }
                     strncpy(token_to_append.content, token.data, token.len);
