@@ -12,6 +12,17 @@ typedef enum {
     SEPARATOR,  // { ;...
 } TokenType;
 
+//  TODO: add node types 
+typedef enum {
+    ASSIGN,
+    WHILE,
+    IF,
+    COMPARE,
+    FUNCTION_DECLARATION,
+    BINARY_OPERATOR,
+
+} AstNodeType;
+
 typedef struct {
     TokenType token_type;
     char* content;
@@ -29,6 +40,6 @@ typedef struct {
 } TokenVec;
 
 typedef struct {
-    LstToken** nodes;
-    
-} LstToken;
+    AstNodeType token_type;
+    AstNode** nodes;
+} AstNode;
