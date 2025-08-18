@@ -27,3 +27,8 @@ typedef struct {
     Token* ptr;
     size_t len;
 } TokenVec;
+
+typedef struct {
+    LstToken** nodes;
+    
+} LstToken;
